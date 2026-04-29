@@ -32,6 +32,18 @@ final class AuthViewModel {
         throw AuthError.notImplemented
     }
 
+    #if DEBUG
+    func signInAsTestUser() {
+        currentUser = AppUser(
+            id: "dev-user-001",
+            username: "test_walker",
+            email: "test@everystreet.app",
+            zipCode: "94105"
+        )
+        isAuthenticated = true
+    }
+    #endif
+
     func signOut() {
         isAuthenticated = false
         currentUser = nil

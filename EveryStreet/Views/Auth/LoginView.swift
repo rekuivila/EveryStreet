@@ -74,6 +74,15 @@ struct LoginView: View {
             }
             .font(.subheadline)
             .foregroundStyle(.white.opacity(0.65))
+
+            #if DEBUG
+            Button(action: { authViewModel.signInAsTestUser() }) {
+                Label("Dev Login", systemImage: "hammer.fill")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.4))
+            }
+            .padding(.top, 8)
+            #endif
         }
         .padding(.horizontal, 32)
         .padding(.bottom, 52)
