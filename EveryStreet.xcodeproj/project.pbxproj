@@ -37,6 +37,7 @@
 		4B9CC02A2FA1A92500087A17 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4B9CC02C2FA1A92600087A17 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B9CC02F2FA1A92600087A17 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AA0002000000000000000001 /* EveryStreet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EveryStreet.entitlements; sourceTree = "<group>"; };
 		AA0001000000000000000010 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		AA0001000000000000000012 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		AA0001000000000000000014 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -89,6 +90,7 @@
 			children = (
 				4B9CC0282FA1A92500087A17 /* EveryStreetApp.swift */,
 				4B9CC02A2FA1A92500087A17 /* ContentView.swift */,
+				AA0002000000000000000001 /* EveryStreet.entitlements */,
 				AA0001000000000000000001 /* Views */,
 				AA0001000000000000000008 /* Models */,
 				AA0001000000000000000009 /* Services */,
@@ -129,14 +131,6 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
-		AA0001000000000000000007 /* Main */ = {
-			isa = PBXGroup;
-			children = (
-				AA0001000000000000000014 /* MainTabView.swift */,
-			);
-			path = Main;
-			sourceTree = "<group>";
-		};
 		AA0001000000000000000003 /* Map */ = {
 			isa = PBXGroup;
 			children = (
@@ -168,6 +162,14 @@
 				AA000100000000000000001E /* ProfileView.swift */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		AA0001000000000000000007 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				AA0001000000000000000014 /* MainTabView.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 		AA0001000000000000000008 /* Models */ = {
@@ -245,6 +247,9 @@
 				Base,
 			);
 			mainGroup = 4B9CC01C2FA1A92500087A17;
+			packageReferences = (
+				4B9CC0362FA1AEAE00087A17 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			productRefGroup = 4B9CC0262FA1A92500087A17 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -421,16 +426,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EveryStreet/EveryStreet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"EveryStreet/Preview Content\"";
 				DEVELOPMENT_TEAM = QNRZCZCWSJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Every Street uses your location to track the streets you walk.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Every Street uses your location in the background to keep tracking your walk.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Every Street reads your walking workouts to import them automatically.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Every Street saves your walks to Apple Health.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Every Street uses your location in the background to keep tracking your walk.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Every Street uses your location to track the streets you walk.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -454,16 +460,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EveryStreet/EveryStreet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"EveryStreet/Preview Content\"";
 				DEVELOPMENT_TEAM = QNRZCZCWSJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Every Street uses your location to track the streets you walk.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Every Street uses your location in the background to keep tracking your walk.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Every Street reads your walking workouts to import them automatically.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Every Street saves your walks to Apple Health.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Every Street uses your location in the background to keep tracking your walk.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Every Street uses your location to track the streets you walk.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -504,6 +511,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B9CC0362FA1AEAE00087A17 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 4B9CC01D2FA1A92500087A17 /* Project object */;
 }
