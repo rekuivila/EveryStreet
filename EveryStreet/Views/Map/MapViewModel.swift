@@ -49,7 +49,8 @@ final class MapViewModel {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { break }
-                await MainActor.run { self?.elapsedSeconds += 1 }
+                guard let self else { break }
+                await MainActor.run { self.elapsedSeconds += 1 }
             }
         }
 
