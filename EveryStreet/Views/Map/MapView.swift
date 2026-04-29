@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 import SwiftData
 
+@MainActor
 struct MapView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = MapViewModel()
