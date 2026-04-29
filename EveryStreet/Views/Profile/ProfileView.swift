@@ -4,12 +4,21 @@ import SwiftData
 struct ProfileView: View {
     @Environment(AuthViewModel.self) private var authViewModel
     @Query(sort: \Walk.date, order: .reverse) private var walks: [Walk]
+    @Query private var cachedStreets: [CachedStreet]
+
+    @State private var editingZip = false
+    @State private var zipInput = ""
 
     private var totalDistanceMeters: Double { walks.reduce(0) { $0 + $1.distanceMeters } }
     private var formattedTotalDistance: String {
         totalDistanceMeters >= 1000
             ? String(format: "%.1f km", totalDistanceMeters / 1000)
             : String(format: "%.0f m", totalDistanceMeters)
+    }
+
+    private var walkedCount: Int { cachedStreets.filter(\.isWalked).count }
+    private var completionPercent: Double {
+        cachedStreets.isEmpty ? 0 : Double(walkedCount) / Double(cachedStreets.count)
     }
 
     var body: some View {
@@ -33,7 +42,12 @@ struct ProfileView: View {
             }
             .background(Color(.systemGroupedBackground))
         }
+        .sheet(isPresented: $editingZip) {
+            zipEditSheet
+        }
     }
+
+    // MARK: - Profile header
 
     private var profileHeader: some View {
         VStack(spacing: 12) {
@@ -50,9 +64,28 @@ struct ProfileView: View {
                 .font(.title2).fontWeight(.bold)
 
             if let zip = authViewModel.currentUser?.zipCode, !zip.isEmpty {
-                Label(zip, systemImage: "mappin.circle")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 4) {
+                    Label(zip, systemImage: "mappin.circle")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Button {
+                        zipInput = zip
+                        editingZip = true
+                    } label: {
+                        Image(systemName: "pencil.circle")
+                            .font(.subheadline)
+                            .foregroundStyle(AppConstants.accentColor)
+                    }
+                }
+            } else {
+                Button {
+                    zipInput = ""
+                    editingZip = true
+                } label: {
+                    Label("Set ZIP Code", systemImage: "mappin.circle")
+                        .font(.subheadline)
+                        .foregroundStyle(AppConstants.accentColor)
+                }
             }
         }
         .frame(maxWidth: .infinity)
@@ -61,15 +94,18 @@ struct ProfileView: View {
         .cornerRadius(16)
     }
 
+    // MARK: - Stats grid
+
     private var statsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             StatCell(value: "\(walks.count)", label: "Total Walks", icon: "figure.walk")
             StatCell(value: formattedTotalDistance, label: "Total Distance", icon: "ruler")
-            // TODO Phase 2: Populate from OSM street-matching data
-            StatCell(value: "0", label: "Streets Walked", icon: "road.lanes")
-            StatCell(value: "0%", label: "Completion", icon: "percent")
+            StatCell(value: "\(walkedCount)", label: "Streets Walked", icon: "road.lanes")
+            StatCell(value: "\(Int(completionPercent * 100))%", label: "Completion", icon: "percent")
         }
     }
+
+    // MARK: - Connected apps
 
     private var connectedAppsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -77,7 +113,7 @@ struct ProfileView: View {
                 .font(.headline)
                 .padding(.horizontal, 4)
 
-            // TODO Phase 2: OAuth flows for Strava, Garmin; Apple HealthKit authorization
+            // TODO Phase 3: OAuth flows for Strava, Garmin; Apple HealthKit authorization
             connectedAppRow(icon: "figure.run", iconColor: .orange, name: "Strava")
             connectedAppRow(icon: "applewatch", iconColor: .green, name: "Apple Health")
             connectedAppRow(icon: "waveform.path.ecg", iconColor: .blue, name: "Garmin Connect")
@@ -99,7 +135,44 @@ struct ProfileView: View {
         .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
     }
+
+    // MARK: - ZIP edit sheet
+
+    private var zipEditSheet: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                TextField("ZIP Code", text: $zipInput)
+                    .keyboardType(.numberPad)
+                    .font(.system(size: 28, weight: .semibold, design: .monospaced))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 200)
+                    .padding()
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(12)
+
+                Spacer()
+            }
+            .padding(.top, 32)
+            .navigationTitle("ZIP Code")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { editingZip = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        authViewModel.currentUser?.zipCode = zipInput
+                        editingZip = false
+                    }
+                    .disabled(zipInput.count != 5)
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
 }
+
+// MARK: - Stat cell
 
 private struct StatCell: View {
     let value: String

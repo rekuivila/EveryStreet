@@ -1,24 +1,16 @@
 import Foundation
-import CoreLocation
 
-// Represents one OSM way segment within a zip-code boundary.
+// Lightweight DTO representing one OSM way segment within a ZIP-code boundary.
+// This is a transient value type — use CachedStreet for SwiftData persistence.
 struct Street: Identifiable, Codable {
     let id: String          // OSM way ID
     let name: String
-    let coordinates: [[Double]]     // [[lat, lon], ...]
-    var isWalked: Bool
-
-    var polylineCoordinates: [CLLocationCoordinate2D] {
-        coordinates.compactMap { pair in
-            guard pair.count == 2 else { return nil }
-            return CLLocationCoordinate2D(latitude: pair[0], longitude: pair[1])
-        }
-    }
+    let coordinatesData: Data   // JSON-encoded [[lat, lon]]
 }
 
-// TODO Phase 2: Fetch streets via Overpass API query:
-//   [out:json];
-//   area[postal_code="XXXXX"];
-//   way[highway~"^(residential|tertiary|secondary|primary)$"](area);
+// TODO Phase 2: OSM Overpass API query used to fetch streets:
+//   [out:json][timeout:30];
+//   way["highway"~"^(residential|living_street|footway|path|pedestrian|service|unclassified|tertiary|secondary|primary)$"]
+//     ({south},{west},{north},{east});
 //   out geom;
-// Persist walked street IDs in Supabase per user.
+// Bounding box is derived from Nominatim postal-code lookup.

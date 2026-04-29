@@ -22,6 +22,7 @@
 		AA0001000000000000000021 /* AppUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000020 /* AppUser.swift */; };
 		AA0001000000000000000023 /* Walk.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000022 /* Walk.swift */; };
 		AA0001000000000000000025 /* Street.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000024 /* Street.swift */; };
+		AA0003000000000000000002 /* CachedStreet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003000000000000000001 /* CachedStreet.swift */; };
 		AA0001000000000000000027 /* Streak.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000026 /* Streak.swift */; };
 		AA0001000000000000000029 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000028 /* LocationService.swift */; };
 		AA000100000000000000002B /* StreetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000100000000000000002A /* StreetService.swift */; };
@@ -49,6 +50,7 @@
 		AA0001000000000000000020 /* AppUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUser.swift; sourceTree = "<group>"; };
 		AA0001000000000000000022 /* Walk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Walk.swift; sourceTree = "<group>"; };
 		AA0001000000000000000024 /* Street.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Street.swift; sourceTree = "<group>"; };
+		AA0003000000000000000001 /* CachedStreet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedStreet.swift; sourceTree = "<group>"; };
 		AA0001000000000000000026 /* Streak.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Streak.swift; sourceTree = "<group>"; };
 		AA0001000000000000000028 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		AA000100000000000000002A /* StreetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetService.swift; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				AA0001000000000000000020 /* AppUser.swift */,
 				AA0001000000000000000022 /* Walk.swift */,
 				AA0001000000000000000024 /* Street.swift */,
+				AA0003000000000000000001 /* CachedStreet.swift */,
 				AA0001000000000000000026 /* Streak.swift */,
 			);
 			path = Models;
@@ -289,6 +292,7 @@
 				AA0001000000000000000021 /* AppUser.swift in Sources */,
 				AA0001000000000000000023 /* Walk.swift in Sources */,
 				AA0001000000000000000025 /* Street.swift in Sources */,
+				AA0003000000000000000002 /* CachedStreet.swift in Sources */,
 				AA0001000000000000000027 /* Streak.swift in Sources */,
 				AA0001000000000000000029 /* LocationService.swift in Sources */,
 				AA000100000000000000002B /* StreetService.swift in Sources */,

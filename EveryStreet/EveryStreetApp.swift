@@ -10,6 +10,6 @@ struct EveryStreetApp: App {
             ContentView()
                 .environment(authViewModel)
         }
-        .modelContainer(for: [Walk.self, AppUser.self])
+        .modelContainer(for: [Walk.self, AppUser.self, CachedStreet.self])
     }
 }

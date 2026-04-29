@@ -3,8 +3,11 @@ import MapKit
 import CoreLocation
 import SwiftData
 
+@MainActor
 @Observable
 final class MapViewModel {
+    // MARK: - Walk tracking state
+
     var walkPath: [CLLocationCoordinate2D] = []
     var isRecording = false
     var elapsedSeconds: Int = 0
@@ -17,10 +20,26 @@ final class MapViewModel {
         ))
     )
 
-    // TODO Phase 2: walkedSegments: [Street] for rendering previously walked streets as overlays
+    // MARK: - Street overlay state
+
+    var streets: [CachedStreet] = []
+    var isLoadingStreets = false
+    var streetLoadError: String?
+    var completionPercent: Double = 0
+    var newlyWalkedIDs: Set<String> = []
+    var showZipCodePrompt = false
+
+    // MARK: - Computed street views
+
+    var walkedStreets: [CachedStreet] { streets.filter(\.isWalked) }
+    var unwalkedStreets: [CachedStreet] { streets.filter { !$0.isWalked } }
+
+    // MARK: - Private tasks
 
     private var recordingTask: Task<Void, Never>?
     private var timerTask: Task<Void, Never>?
+
+    // MARK: - Formatted accessors
 
     var formattedElapsedTime: String {
         let h = elapsedSeconds / 3600
@@ -37,6 +56,55 @@ final class MapViewModel {
             : String(format: "%.0f m", distanceMeters)
     }
 
+    // MARK: - Street loading
+
+    func loadStreets(for zipCode: String, modelContext: ModelContext) async {
+        guard !zipCode.isEmpty else { return }
+        guard streets.isEmpty else { return }
+
+        // Check SwiftData cache first.
+        let descriptor = FetchDescriptor<CachedStreet>(
+            predicate: #Predicate { street in street.zipCode == zipCode }
+        )
+        if let cached = try? modelContext.fetch(descriptor), !cached.isEmpty {
+            streets = cached
+            updateCompletion()
+            return
+        }
+
+        isLoadingStreets = true
+        defer { isLoadingStreets = false }
+
+        do {
+            let dtos = try await StreetService().fetchStreets(zipCode: zipCode)
+            let models = dtos.map { dto in
+                CachedStreet(
+                    osmID: dto.id,
+                    name: dto.name,
+                    zipCode: zipCode,
+                    coordinatesData: dto.coordinatesData
+                )
+            }
+            for model in models {
+                modelContext.insert(model)
+            }
+            streets = models
+            updateCompletion()
+        } catch {
+            streetLoadError = error.localizedDescription
+        }
+    }
+
+    private func updateCompletion() {
+        guard !streets.isEmpty else {
+            completionPercent = 0
+            return
+        }
+        completionPercent = Double(streets.filter(\.isWalked).count) / Double(streets.count)
+    }
+
+    // MARK: - Walk control
+
     func startWalk(locationService: LocationService) {
         walkPath = []
         elapsedSeconds = 0
@@ -50,7 +118,7 @@ final class MapViewModel {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { break }
                 guard let self else { break }
-                await MainActor.run { self.elapsedSeconds += 1 }
+                self.elapsedSeconds += 1
             }
         }
 
@@ -58,12 +126,10 @@ final class MapViewModel {
             for await location in locationService.locationStream {
                 guard let self else { break }
                 let coord = location.coordinate
-                await MainActor.run {
-                    if let last = self.walkPath.last {
-                        self.distanceMeters += last.distance(to: coord)
-                    }
-                    self.walkPath.append(coord)
+                if let last = self.walkPath.last {
+                    self.distanceMeters += last.distance(to: coord)
                 }
+                self.walkPath.append(coord)
             }
         }
     }
@@ -85,6 +151,36 @@ final class MapViewModel {
         )
         modelContext.insert(walk)
 
-        // TODO Phase 2: Upload walk to Supabase, run OSM street-matching, update leaderboard
+        processStreetMatching(for: walkPath)
+    }
+
+    // MARK: - Street matching
+
+    private func processStreetMatching(for coords: [CLLocationCoordinate2D]) {
+        let matchedIDs = StreetService.matchWalkToStreets(
+            walkCoordinates: coords,
+            streets: streets
+        )
+        guard !matchedIDs.isEmpty else { return }
+
+        var newlyWalked = Set<String>()
+        for street in streets where matchedIDs.contains(street.osmID) && !street.isWalked {
+            street.isWalked = true
+            newlyWalked.insert(street.osmID)
+        }
+
+        guard !newlyWalked.isEmpty else { return }
+
+        withAnimation(.easeInOut(duration: 0.8)) {
+            newlyWalkedIDs = newlyWalked
+            updateCompletion()
+        }
+
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            withAnimation {
+                self.newlyWalkedIDs = []
+            }
+        }
     }
 }
