@@ -1,24 +1,16 @@
-//
-//  ContentView.swift
-//  EveryStreet
-//
-//  Created by reed kuivila on 4/28/26.
-//
-
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @Environment(AuthViewModel.self) private var authViewModel
 
-#Preview {
-    ContentView()
+    var body: some View {
+        Group {
+            if authViewModel.isAuthenticated {
+                MainTabView()
+            } else {
+                LoginView()
+            }
+        }
+        .animation(.easeInOut, value: authViewModel.isAuthenticated)
+    }
 }
